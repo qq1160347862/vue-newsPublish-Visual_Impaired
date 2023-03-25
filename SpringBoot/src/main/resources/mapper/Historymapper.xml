@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.Historymapper">
+
+    <resultMap id="result1" type="com.example.demo.entity.Statistics">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="result2" type="com.example.demo.entity.Statistics">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+        <result property="count" column="COUNT(type)" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="getTypeByTime" resultMap="result1">
+        SELECT DISTINCT type from (SELECT  type,h_time FROM history,news
+                                   WHERE history.new_id = news.new_id) as temp
+        WHERE h_time like concat(#{timeString1}, '%')
+    </select>
+
+    <select id="getTypeAndTime" resultMap="result2">
+        SELECT type,COUNT(type) FROM (SELECT  type,h_time FROM history,news
+                                      WHERE history.new_id = news.new_id) as temp
+        WHERE h_time like concat(#{timeString2}, '%') and type = #{typeString}
+        GROUP BY type
+    </select>
+
+    <select id="getAllType" resultMap="result1">
+        SELECT DISTINCT type from (SELECT  type,h_time FROM history,news
+                                   WHERE history.new_id = news.new_id) as temp
+        WHERE h_time >= concat(#{timeString3}, '%') and concat(#{timeString4}, '%')>= h_time
+    </select>
+
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.Usermapper">
+
+
+    <resultMap id="result1" type="com.example.demo.entity.Statistics">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+        <result property="count" column="COUNT(type)" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="result2" type="com.example.demo.entity.User">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+        <result property="count" column="COUNT(type)" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <!--给定一个时间段和用户id，查询该用户最近浏览的各种新闻类型数目-->
+    <select id="getUserHistoryNewTypeCount" resultMap="result1">
+        SELECT type,COUNT(type) FROM history,news
+        WHERE h_time >= #{timeString1} and #{timeString2} >= h_time and user_id = #{userIDString}
+        and news.new_id = history.new_id
+        GROUP BY type
+    </select>
+
+    <select id="getAllUser" resultMap="result2">
+        SELECT user_id,user_name FROM user
+        WHERE user_name like concat(#{search}, '%')
+    </select>
+</mapper>

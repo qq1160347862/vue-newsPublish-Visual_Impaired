@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.Newsmapper">
+
+    <resultMap id="NewsTypeMap" type="com.example.demo.entity.News">
+        <result property="type" column="type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="result1" type="com.example.demo.entity.Statistics">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+        <result property="count" column="COUNT(type)" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="result2" type="com.example.demo.entity.Statistics">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="result3" type="com.example.demo.entity.Statistics">
+        <result property="newType" column="type" jdbcType="VARCHAR"/>
+        <result property="count" column="COUNT(type)" jdbcType="INTEGER"/>
+    </resultMap>
+
+
+<!--    获取新闻类型-->
+    <select id="getNewsType" resultMap="NewsTypeMap">
+        SELECT DISTINCT type FROM `news`
+        WHERE type like concat(#{search}, '%')
+    </select>
+
+<!--    获取新闻总数-->
+    <select id="getCountAll" resultType="int">
+        select count(*) from `news`;
+    </select>
+
+<!--    获取选定日期的新闻标签数目-->
+    <select id="getCount" resultType="int">
+        SELECT COUNT(type) FROM news
+        where pubtime like concat(#{timeString}, '%') and type = #{typeString}
+    </select>
+
+<!--    获取选定日期范围的新闻标签数目-->
+    <select id="getRangecount" resultMap="result1">
+        SELECT type,COUNT(type) FROM news
+                                WHERE pubtime>=#{timeString1} AND #{timeString2} >=pubtime
+                                          GROUP BY type
+    </select>
+
+<!--    获得指定时间段内的新闻类型-->
+    <select id="getAllType" resultMap="result2">
+        SELECT DISTINCT type from news
+        WHERE pubtime >= concat(#{timeString3}, '%') and concat(#{timeString4}, '%')>= pubtime
+    </select>
+
+<!--    获得某一天的新闻类型-->
+    <select id="getTypeByTime" resultMap="result2">
+        SELECT DISTINCT type FROM news
+        WHERE pubtime like concat(#{timeString5}, '%')
+    </select>
+
+<!--    获得指定时间指定类型的新闻数目-->
+    <select id="getTypeAndTime" resultMap="result3">
+        SELECT type,COUNT(type) FROM news
+        WHERE pubtime like concat(#{timeString6}, '%') and type = #{typeString}
+        GROUP BY type
+    </select>
+
+</mapper>
+
